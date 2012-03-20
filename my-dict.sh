@@ -33,6 +33,13 @@ mkdir --parents "$cache_dir" #no errors
 
 word=$(tr "A-Z" "a-z" <<< "$1")	#case insensitive
 
+# spellcheck
+
+while read alternative; do
+	echo $alternative
+done < <(aspell -a --lang=EN check <<< "$word" \
+	| awk 'BEGIN {FS="[,:]";OFD="\n"} /^&/ { for (i=2;i<=NF;i++) {print $i}}')
+
 data_base_entry="$cache_dir/$word"
 
 if [[ ! -a $data_base_entry ]] #if database entry doesn't exist
